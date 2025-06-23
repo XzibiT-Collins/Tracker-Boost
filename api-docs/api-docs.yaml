@@ -1,0 +1,773 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+paths:
+  /api/v1/tasks/update/{id}:
+    put:
+      tags:
+      - task-controller
+      operationId: updateTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskRequestDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TaskResponseDto"
+  /api/v1/projects/update/{id}:
+    put:
+      tags:
+      - project-controller
+      operationId: updateProject
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectRequestDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProjectResponseDto"
+  /api/v1/developers/update/{id}:
+    put:
+      tags:
+      - users-controller
+      operationId: updateDeveloper
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeveloperRequestDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DeveloperResponseDto"
+  /api/v1/tasks/create:
+    post:
+      tags:
+      - task-controller
+      operationId: createTask
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskRequestDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TaskResponseDto"
+  /api/v1/projects/create:
+    post:
+      tags:
+      - project-controller
+      operationId: createProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectRequestDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProjectResponseDto"
+  /api/v1/developers/create:
+    post:
+      tags:
+      - users-controller
+      operationId: createDeveloper
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeveloperRequestDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DeveloperResponseDto"
+  /api/v1/tasks:
+    get:
+      tags:
+      - task-controller
+      operationId: getAllTasks
+      parameters:
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: SORT_BY_TITLE
+          enum:
+          - SORT_BY_DUE_DATE
+          - SORT_BY_STATUS
+          - SORT_BY_TITLE
+      - name: pageNumber
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageTaskResponseDto"
+  /api/v1/tasks/{id}:
+    get:
+      tags:
+      - task-controller
+      operationId: getTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/TaskResponseDto"
+  /api/v1/tasks/overdueTasks:
+    get:
+      tags:
+      - task-controller
+      operationId: getAllOverdueTasks
+      parameters:
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: SORT_BY_TITLE
+          enum:
+          - SORT_BY_DUE_DATE
+          - SORT_BY_STATUS
+          - SORT_BY_TITLE
+      - name: pageNumber
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageTaskResponseDto"
+  /api/v1/projects:
+    get:
+      tags:
+      - project-controller
+      operationId: getAllProjects
+      parameters:
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: SORT_BY_ID
+          enum:
+          - SORT_BY_ID
+          - SORT_BY_NAME
+          - SORT_BY_DEADLINE
+          - SORT_BY_STATUS
+      - name: pageNumber
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageProjectResponseDto"
+  /api/v1/projects/{id}:
+    get:
+      tags:
+      - project-controller
+      operationId: getProject
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProjectResponseDto"
+  /api/v1/developers:
+    get:
+      tags:
+      - users-controller
+      operationId: getAllDevelopers
+      parameters:
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: SORT_BY_ID
+          enum:
+          - SORT_BY_ID
+          - SORT_BY_NAME
+      - name: pageNumber
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageDeveloperResponseDto"
+  /api/v1/developers/{id}:
+    get:
+      tags:
+      - users-controller
+      operationId: getUsers
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DeveloperResponseDto"
+  /api/v1/audit-logs:
+    get:
+      tags:
+      - audit-log-controller
+      operationId: getAllAuditLogs
+      parameters:
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          type: string
+          default: SORT_BY_TIMESTAMP
+          enum:
+          - SORT_BY_ID
+          - SORT_BY_ACTION_TYPE
+          - SORT_BY_TIMESTAMP
+      - name: pageNumber
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageAuditLogResponseDto"
+  /api/v1/tasks/delete/{id}:
+    delete:
+      tags:
+      - task-controller
+      operationId: deleteTask
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/v1/projects/delete/{id}:
+    delete:
+      tags:
+      - project-controller
+      operationId: deleteProject
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/v1/developers/delete/{id}:
+    delete:
+      tags:
+      - users-controller
+      operationId: deleteDeveloper
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+components:
+  schemas:
+    TaskRequestDto:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+        description:
+          type: string
+          maxLength: 500
+          minLength: 0
+        status:
+          type: string
+          enum:
+          - completed
+          - inProgress
+          - pending
+        dueDate:
+          type: string
+          format: date-time
+        developerId:
+          type: integer
+          format: int32
+        projectId:
+          type: integer
+          format: int32
+      required:
+      - dueDate
+      - projectId
+      - status
+      - title
+    TaskResponseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - completed
+          - inProgress
+          - pending
+        dueDate:
+          type: string
+        developer:
+          type: string
+        project:
+          type: string
+    ProjectRequestDto:
+      type: object
+      properties:
+        projectName:
+          type: string
+          minLength: 1
+        description:
+          type: string
+          maxLength: 500
+          minLength: 0
+        deadline:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+          - completed
+          - inProgress
+          - pending
+      required:
+      - deadline
+      - description
+      - projectName
+      - status
+    Developer:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        email:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        projectName:
+          type: string
+        description:
+          type: string
+        deadline:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+          - completed
+          - inProgress
+          - pending
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+    ProjectResponseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        projectName:
+          type: string
+        description:
+          type: string
+        deadline:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+          - completed
+          - inProgress
+          - pending
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+          - completed
+          - inProgress
+          - pending
+        dueDate:
+          type: string
+          format: date-time
+        developer:
+          $ref: "#/components/schemas/Developer"
+        project:
+          $ref: "#/components/schemas/Project"
+    DeveloperRequestDto:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          minLength: 1
+        skills:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          uniqueItems: true
+      required:
+      - email
+      - name
+      - skills
+    DeveloperResponseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        email:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+    PageTaskResponseDto:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        numberOfElements:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/TaskResponseDto"
+        number:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+        empty:
+          type: boolean
+    PageableObject:
+      type: object
+      properties:
+        unpaged:
+          type: boolean
+        paged:
+          type: boolean
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        offset:
+          type: integer
+          format: int64
+    SortObject:
+      type: object
+      properties:
+        unsorted:
+          type: boolean
+        sorted:
+          type: boolean
+        empty:
+          type: boolean
+    PageProjectResponseDto:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        numberOfElements:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProjectResponseDto"
+        number:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+        empty:
+          type: boolean
+    PageDeveloperResponseDto:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        numberOfElements:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeveloperResponseDto"
+        number:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+        empty:
+          type: boolean
+    AuditLogResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+        actionType:
+          type: string
+        entityId:
+          type: string
+        actorName:
+          type: string
+        payload:
+          type: string
+    PageAuditLogResponseDto:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        numberOfElements:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditLogResponseDto"
+        number:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+        empty:
+          type: boolean
