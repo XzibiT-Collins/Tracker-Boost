@@ -74,7 +74,7 @@ public class TaskServiceImpl implements TaskService {
 
         Task savedTask = taskRepository.save(task);
         logAudit("Create Task", String.valueOf(savedTask.getId()), savedTask.getTitle(), savedTask);
-
+        logger.info("Task Saved: " + savedTask.toString() + "\n");
         return objectMapper.convertValue(savedTask, TaskResponseDto.class);
     }
 

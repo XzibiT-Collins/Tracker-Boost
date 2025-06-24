@@ -70,10 +70,11 @@ public class SecurityConfiguration {
                         request.requestMatchers("/api/v1/auth/login").permitAll()
                                 .requestMatchers("/api/v1/auth/register").permitAll()
                                 .requestMatchers("/error").permitAll()
-                                .requestMatchers("/swagger-ui/**").hasRole("ADMIN")
-                                .requestMatchers("/v3/api-docs/**").hasRole("ADMIN")
                                 .requestMatchers("/oauth2/**").permitAll()
                                 .requestMatchers("/login/oauth2/**").permitAll()
+                                .requestMatchers("/actuator/**").permitAll()
+                                .requestMatchers("/swagger-ui/**").hasRole("ADMIN")
+                                .requestMatchers("/v3/api-docs/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
 
