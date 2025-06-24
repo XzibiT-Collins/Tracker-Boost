@@ -2,6 +2,7 @@ package com.project.tracker.services.serviceInterfaces;
 
 import com.project.tracker.dto.requestDto.UserLoginRequestDto;
 import com.project.tracker.dto.requestDto.UsersRequestDto;
+import com.project.tracker.dto.responseDto.TaskResponseDto;
 import com.project.tracker.dto.responseDto.UserLoginResponseDto;
 import com.project.tracker.dto.responseDto.UsersResponseDto;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ public interface UsersService {
     Page<UsersResponseDto> getTopDevelopers();
     UsersResponseDto registerUser(UsersRequestDto requestDto);
     UserLoginResponseDto loginUser(UserLoginRequestDto requestDto);
-
     UsersResponseDto getCurrentLoggedInUser(Authentication authentication);
+
+    Page<TaskResponseDto> getAllUserTasks(int userId, String sortBy, int pageNumber);
 }

@@ -1,9 +1,11 @@
 package com.project.tracker.controllers;
 
 import com.project.tracker.dto.requestDto.UsersRequestDto;
+import com.project.tracker.dto.responseDto.TaskResponseDto;
 import com.project.tracker.dto.responseDto.UsersResponseDto;
 import com.project.tracker.services.serviceInterfaces.UsersService;
 import com.project.tracker.sortingEnums.DeveloperSorting;
+import com.project.tracker.sortingEnums.TaskSorting;
 import jakarta.validation.Valid;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -76,5 +78,19 @@ public class UsersController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(usersService.getTopDevelopers());
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_MANAGER','ROLE_DEVELOPER')")
+    @Cacheable(value = "userTasks")
+    @GetMapping("/{userId}/tasks")
+    public ResponseEntity<Page<TaskResponseDto>> getUserTasks(
+            @PathVariable int userId,
+            @RequestParam(required = false, defaultValue = "SORT_BY_TITLE") TaskSorting sortBy,
+            @RequestParam(required = false, defaultValue = "0") int pageNumber
+    ){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(usersService
+                        .getAllUserTasks(userId,sortBy.getField(),pageNumber));
     }
 }

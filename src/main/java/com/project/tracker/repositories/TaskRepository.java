@@ -24,4 +24,8 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     // Tasks count by status
     @Query("SELECT t.status AS status, COUNT(t) AS count FROM Task t GROUP BY t.status")
     List<StatusCountProjection> countTasksGroupedByStatus();
+
+    //Fetch user-related tasks
+    @Query("SELECT t FROM Task t WHERE t.users.id = :userId")
+    Page<Task> findAllByUserId(@Param("userId") int userId, Pageable pageable);
 }

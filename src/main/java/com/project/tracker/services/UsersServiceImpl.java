@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.tracker.authentication.jwtService.JwtService;
 import com.project.tracker.dto.requestDto.UserLoginRequestDto;
 import com.project.tracker.dto.requestDto.UsersRequestDto;
+import com.project.tracker.dto.responseDto.TaskResponseDto;
 import com.project.tracker.dto.responseDto.UserLoginResponseDto;
 import com.project.tracker.dto.responseDto.UsersResponseDto;
 import com.project.tracker.exceptions.customExceptions.InvalidLoginDetailsException;
@@ -12,9 +13,11 @@ import com.project.tracker.exceptions.customExceptions.UserRoleNotFoundException
 import com.project.tracker.exceptions.customExceptions.UserNotFoundException;
 import com.project.tracker.exceptions.customExceptions.UserAlreadyExistException;
 import com.project.tracker.models.AuditLog;
+import com.project.tracker.models.Task;
 import com.project.tracker.models.Users;
 import com.project.tracker.models.authmodels.Role;
 import com.project.tracker.repositories.RoleRepository;
+import com.project.tracker.repositories.TaskRepository;
 import com.project.tracker.repositories.UsersRepository;
 import com.project.tracker.services.serviceInterfaces.AuditLogService;
 import com.project.tracker.services.serviceInterfaces.UsersService;
@@ -37,6 +40,7 @@ public class UsersServiceImpl implements UsersService {
     private final Logger logger = Logger.getLogger(UsersServiceImpl.class.getName());
     private final ObjectMapper objectMapper;
     private final UsersRepository usersRepository;
+    private final TaskRepository taskRepository;
     private final AuditLogService auditLogService;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
@@ -48,6 +52,7 @@ public class UsersServiceImpl implements UsersService {
                             PasswordEncoder passwordEncoder,
                             RoleRepository roleRepository,
                             UsersRepository usersRepository,
+                            TaskRepository taskRepository,
                             AuthenticationProvider authenticationProvider,
                             JwtService jwtService) {
         this.objectMapper = objectMapper;
@@ -55,6 +60,7 @@ public class UsersServiceImpl implements UsersService {
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.usersRepository = usersRepository;
+        this.taskRepository = taskRepository;
         this.authenticationProvider = authenticationProvider;
         this.jwtService = jwtService;
     }
@@ -105,6 +111,14 @@ public class UsersServiceImpl implements UsersService {
         logger.info("Current Logged in user: " + users.getName() + " " + users.getEmail());
 
         return objectMapper.convertValue(users, UsersResponseDto.class);
+    }
+
+    @Override
+    public Page<TaskResponseDto> getAllUserTasks(int userId, String sortBy, int pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(sortBy));
+        Page<Task> userTasks = taskRepository.findAllByUserId(userId, pageable);
+
+        return userTasks.map(task -> objectMapper.convertValue(task, TaskResponseDto.class));
     }
 
     @Override
