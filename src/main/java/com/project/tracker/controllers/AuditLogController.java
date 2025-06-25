@@ -1,9 +1,11 @@
 package com.project.tracker.controllers;
 
+import com.project.tracker.dto.responseDto.ApiResponseDto;
 import com.project.tracker.dto.responseDto.AuditLogResponseDto;
 import com.project.tracker.services.serviceInterfaces.AuditLogService;
 import com.project.tracker.sortingEnums.AuditLogSorting;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,13 +22,13 @@ public class AuditLogController {
     }
 
     @GetMapping
-    protected ResponseEntity<Page<AuditLogResponseDto>> getAllAuditLogs(
+    protected ResponseEntity<ApiResponseDto<Page<AuditLogResponseDto>>> getAllAuditLogs(
             @RequestParam(defaultValue = "SORT_BY_TIMESTAMP")
             AuditLogSorting sortBy, @RequestParam(defaultValue = "0") int pageNumber){
 
         return ResponseEntity
                 .ok()
-                .body(auditLogService.getAllAuditLogs(sortBy.getField(),pageNumber));
+                .body(ApiResponseDto.success(auditLogService.getAllAuditLogs(sortBy.getField(),pageNumber), HttpStatus.OK.value()));
 
     }
 }

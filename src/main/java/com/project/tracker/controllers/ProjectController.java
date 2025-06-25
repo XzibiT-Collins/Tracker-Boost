@@ -1,6 +1,7 @@
 package com.project.tracker.controllers;
 
 import com.project.tracker.dto.requestDto.ProjectRequestDto;
+import com.project.tracker.dto.responseDto.ApiResponseDto;
 import com.project.tracker.dto.responseDto.ProjectResponseDto;
 import com.project.tracker.services.serviceInterfaces.ProjectService;
 import com.project.tracker.sortingEnums.ProjectSorting;
@@ -25,58 +26,58 @@ public class ProjectController {
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @PostMapping("")
     @CacheEvict(value = "projects", allEntries = true)
-    public ResponseEntity<ProjectResponseDto> createProject(@Valid @RequestBody ProjectRequestDto request){
+    public ResponseEntity<ApiResponseDto<ProjectResponseDto>> createProject(@Valid @RequestBody ProjectRequestDto request){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(projectService.addProject(request));
+                .body(ApiResponseDto.success(projectService.addProject(request),HttpStatus.CREATED.value()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @CacheEvict(value = "projects", allEntries = true)
-    public ResponseEntity<String> deleteProject(@PathVariable int id){
+    public ResponseEntity<ApiResponseDto<String>> deleteProject(@PathVariable int id){
         projectService.deleteProject(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body("Project Deleted Successfully");
+                .body(ApiResponseDto.success("project deleted successfully",HttpStatus.OK.value()));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @PutMapping("/{id}")
     @CacheEvict(value = "projects", allEntries = true)
-    public ResponseEntity<ProjectResponseDto> updateProject(@PathVariable int id, @Valid @RequestBody ProjectRequestDto request ){
+    public ResponseEntity<ApiResponseDto<ProjectResponseDto>> updateProject(@PathVariable int id, @Valid @RequestBody ProjectRequestDto request ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(projectService.updateProject(id,request));
+                .body(ApiResponseDto.success(projectService.updateProject(id,request),HttpStatus.OK.value()));
     }
 
     @GetMapping("/{id}")
     @Cacheable(value = "projects", key = "#id")
-    public ResponseEntity<ProjectResponseDto> getProject(@PathVariable int id){
+    public ResponseEntity<ApiResponseDto<ProjectResponseDto>> getProject(@PathVariable int id){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(projectService.getProjectById(id));
+                .body(ApiResponseDto.success(projectService.getProjectById(id),HttpStatus.OK.value()));
     }
 
     @GetMapping
     @Cacheable(value = "projects", key = "T(java.util.Objects).hash(#pageNumber, #sortBy)")
-    public ResponseEntity<Page<ProjectResponseDto>> getAllProjects(
+    public ResponseEntity<ApiResponseDto<Page<ProjectResponseDto>>> getAllProjects(
             @RequestParam(required = false, defaultValue = "SORT_BY_ID") ProjectSorting sortBy,
             @RequestParam(required = false, defaultValue = "0") int pageNumber
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(projectService.getAllProjects(pageNumber,sortBy.getField()));
+                .body(ApiResponseDto.success(projectService.getAllProjects(pageNumber,sortBy.getField()),HttpStatus.OK.value()));
     }
 
     @Cacheable(value = "projectsWithoutTasks")
     @GetMapping("/withoutTasks")
-    public ResponseEntity<Page<ProjectResponseDto>> getProjectsWithoutTasks(
+    public ResponseEntity<ApiResponseDto<Page<ProjectResponseDto>>> getProjectsWithoutTasks(
             @RequestParam(required = false, defaultValue = "SORT_BY_ID") ProjectSorting sortBy,
             @RequestParam(required = false, defaultValue = "0") int pageNumber
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(projectService.getAllProjectsByTasksIsEmpty(pageNumber,sortBy.getField()));
+                .body(ApiResponseDto.success(projectService.getAllProjectsByTasksIsEmpty(pageNumber,sortBy.getField()),HttpStatus.OK.value()));
     }
 }

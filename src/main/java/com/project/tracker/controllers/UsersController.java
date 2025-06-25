@@ -1,6 +1,7 @@
 package com.project.tracker.controllers;
 
 import com.project.tracker.dto.requestDto.UsersRequestDto;
+import com.project.tracker.dto.responseDto.ApiResponseDto;
 import com.project.tracker.dto.responseDto.TaskResponseDto;
 import com.project.tracker.dto.responseDto.UsersResponseDto;
 import com.project.tracker.services.serviceInterfaces.UsersService;
@@ -27,34 +28,34 @@ public class UsersController {
 
     @DeleteMapping("/{id}")
     @CacheEvict(value = {"developers","top5Developers"}, allEntries = true)
-    public ResponseEntity<String> deleteUser(@PathVariable int id){
+    public ResponseEntity<ApiResponseDto<String>> deleteUser(@PathVariable int id){
         usersService.deleteUser(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body("Users Deleted Successfully");
+                .body(ApiResponseDto.success("user deleted successfully",HttpStatus.OK.value()));
     }
 
     @PutMapping("/{id}")
     @CacheEvict(value = {"developers","top5Developers"}, allEntries = true)
-    public ResponseEntity<UsersResponseDto> updateUser(@PathVariable int id, @Valid @RequestBody UsersRequestDto request ){
+    public ResponseEntity<ApiResponseDto<UsersResponseDto>> updateUser(@PathVariable int id, @Valid @RequestBody UsersRequestDto request ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(usersService.updateUser(id,request));
+                .body(ApiResponseDto.success(usersService.updateUser(id,request),HttpStatus.OK.value()));
     }
 
     @GetMapping("/{id}")
     @Cacheable(value = "developers", key = "#id")
-    public ResponseEntity<UsersResponseDto> getUser(@PathVariable int id){
+    public ResponseEntity<ApiResponseDto<UsersResponseDto>> getUser(@PathVariable int id){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(usersService.getUserById(id));
+                .body(ApiResponseDto.success(usersService.getUserById(id),HttpStatus.OK.value()));
     }
 
 
     @PreAuthorize("hasAnyRole('ADMIN','DEVELOPER','MANAGER','CONTRACTOR')")
     @GetMapping("/me")
-    protected ResponseEntity<UsersResponseDto> getCurrentLoggedInUser(Authentication authentication){
-        return ResponseEntity.status(HttpStatus.OK).body(usersService.getCurrentLoggedInUser(authentication));
+    protected ResponseEntity<ApiResponseDto<UsersResponseDto>> getCurrentLoggedInUser(Authentication authentication){
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponseDto.success(usersService.getCurrentLoggedInUser(authentication),HttpStatus.OK.value()));
     }
 
 
@@ -62,35 +63,35 @@ public class UsersController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping
     @Cacheable(value = "developers", key = "T(java.util.Objects).hash(#pageNumber, #sortBy)")
-    public ResponseEntity<Page<UsersResponseDto>> getAllUsers(
+    public ResponseEntity<ApiResponseDto<Page<UsersResponseDto>>> getAllUsers(
             @RequestParam(required = false, defaultValue = "SORT_BY_ID") DeveloperSorting sortBy,
             @RequestParam(required = false, defaultValue = "0") int pageNumber
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(usersService.getAllUsers(pageNumber,sortBy.getField()));
+                .body(ApiResponseDto.success(usersService.getAllUsers(pageNumber,sortBy.getField()),HttpStatus.OK.value()));
     }
 
     @Cacheable(value = "top5Developers")
     @GetMapping("/top5Developers")
-    public ResponseEntity<Page<UsersResponseDto>> getTopDevelopers(){
+    public ResponseEntity<ApiResponseDto<Page<UsersResponseDto>>> getTopDevelopers(){
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(usersService.getTopDevelopers());
+                .body(ApiResponseDto.success(usersService.getTopDevelopers(),HttpStatus.OK.value()));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_MANAGER','ROLE_DEVELOPER')")
     @Cacheable(value = "userTasks")
     @GetMapping("/{userId}/tasks")
-    public ResponseEntity<Page<TaskResponseDto>> getUserTasks(
+    public ResponseEntity<ApiResponseDto<Page<TaskResponseDto>>> getUserTasks(
             @PathVariable int userId,
             @RequestParam(required = false, defaultValue = "SORT_BY_TITLE") TaskSorting sortBy,
             @RequestParam(required = false, defaultValue = "0") int pageNumber
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(usersService
-                        .getAllUserTasks(userId,sortBy.getField(),pageNumber));
+                .body(ApiResponseDto.success(usersService
+                        .getAllUserTasks(userId,sortBy.getField(),pageNumber),HttpStatus.OK.value()));
     }
 }

@@ -1,6 +1,7 @@
 package com.project.tracker.controllers;
 
 import com.project.tracker.dto.requestDto.TaskRequestDto;
+import com.project.tracker.dto.responseDto.ApiResponseDto;
 import com.project.tracker.dto.responseDto.StatusCountDto;
 import com.project.tracker.dto.responseDto.TaskResponseDto;
 import com.project.tracker.services.serviceInterfaces.TaskService;
@@ -28,71 +29,71 @@ public class TaskController {
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @CacheEvict(value = {"tasks","overdueTasks","taskCount"}, allEntries = true)
     @PostMapping("")
-    public ResponseEntity<TaskResponseDto> createTask(@Valid @RequestBody TaskRequestDto request){
+    public ResponseEntity<ApiResponseDto<TaskResponseDto>> createTask(@Valid @RequestBody TaskRequestDto request){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(taskService.addTask(request));
+                .body(ApiResponseDto.success(taskService.addTask(request),HttpStatus.CREATED.value()));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @CacheEvict(value = {"tasks","overdueTasks","taskCount"}, allEntries = true)
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTask(@PathVariable int id){
+    public ResponseEntity<ApiResponseDto<String>> deleteTask(@PathVariable int id){
         taskService.deleteTask(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body("Task Deleted Successfully");
+                .body(ApiResponseDto.success("task deleted successfully",HttpStatus.OK.value()));
     }
 
-//    @PreAuthorize("hasAnyRole('DEVELOPER')")
+
     @PreAuthorize("@accessChecker.isOwnerAdmin(#id,authentication) or @accessChecker.isOwnerOfTask(#id,authentication.name)")
     @CacheEvict(value = {"tasks","overdueTasks","taskCount"}, allEntries = true)
     @PutMapping("/{id}")
-    public ResponseEntity<TaskResponseDto> updateTask(@PathVariable int id, @Valid @RequestBody TaskRequestDto request){
+    public ResponseEntity<ApiResponseDto<TaskResponseDto>> updateTask(@PathVariable int id, @Valid @RequestBody TaskRequestDto request){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(taskService.updateTask(id,request));
+                .body(ApiResponseDto.success(taskService.updateTask(id,request),HttpStatus.OK.value()));
     }
 
     @PreAuthorize("hasAnyRole('DEVELOPER','ADMIN','DEVELOPER')")
     @Cacheable(value = "tasks", key = "#id")
     @GetMapping("/{id}")
-    public ResponseEntity<TaskResponseDto> getTask(@PathVariable int id){
+    public ResponseEntity<ApiResponseDto<TaskResponseDto>> getTask(@PathVariable int id){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(taskService.getTaskById(id));
+                .body(ApiResponseDto.success(taskService.getTaskById(id),HttpStatus.OK.value()));
     }
 
     @PreAuthorize("hasAnyRole('DEVELOPER','ADMIN','DEVELOPER')")
     @Cacheable(value = "tasks", key = "T(java.util.Objects).hash(#pageNumber, #sortBy)")
     @GetMapping
-    public ResponseEntity<Page<TaskResponseDto>> getAllTasks(
+    public ResponseEntity<ApiResponseDto<Page<TaskResponseDto>>> getAllTasks(
             @RequestParam(required = false, defaultValue = "SORT_BY_TITLE") TaskSorting sortBy,
             @RequestParam(required = false, defaultValue = "0") int pageNumber
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(taskService.getAllTasks(pageNumber,sortBy.getField()));
+                .body(ApiResponseDto.success(taskService.getAllTasks(pageNumber,sortBy.getField()),HttpStatus.OK.value()));
     }
 
     @PreAuthorize("hasAnyRole('DEVELOPER','ADMIN','DEVELOPER')")
     @Cacheable(value = "overdueTasks", key = "T(java.util.Objects).hash(#pageNumber, #sortBy)")
     @GetMapping("/overdueTasks")
-    public ResponseEntity<Page<TaskResponseDto>> getAllOverdueTasks(
+    public ResponseEntity<ApiResponseDto<Page<TaskResponseDto>>> getAllOverdueTasks(
             @RequestParam(required = false, defaultValue = "SORT_BY_TITLE") TaskSorting sortBy,
             @RequestParam(required = false, defaultValue = "0") int pageNumber
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(taskService.getOverdueTasks(pageNumber,sortBy.getField()));
+                .body(ApiResponseDto.success(taskService.getOverdueTasks(pageNumber,sortBy.getField()),HttpStatus.OK.value()));
     }
 
     @PreAuthorize("hasAnyRole('DEVELOPER','ADMIN','DEVELOPER')")
     @Cacheable(value = "taskCount")
     @GetMapping("/statusCount")
-    public ResponseEntity<List<StatusCountDto>> countTasksGroupedByStatus(){
+    public ResponseEntity<ApiResponseDto<List<StatusCountDto>>> countTasksGroupedByStatus(){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(taskService.countTasksGroupedByStatus());
+                .body(ApiResponseDto.success(taskService.countTasksGroupedByStatus(),HttpStatus.OK.value()));
     }
 }
