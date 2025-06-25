@@ -1,5 +1,6 @@
 package com.project.tracker.controllers.oauthController;
 
+import com.project.tracker.dto.responseDto.ApiResponseDto;
 import com.project.tracker.dto.responseDto.OauthSuccessResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class OauthSuccessController {
 
     @GetMapping("/")
-    protected ResponseEntity<OauthSuccessResponse> oauthSuccess(String token, String email){
+    protected ResponseEntity<ApiResponseDto<OauthSuccessResponse>> oauthSuccess(String token, String email){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(OauthSuccessResponse.builder()
+                .body(ApiResponseDto.success(OauthSuccessResponse.builder()
                         .email(email)
                         .token(token)
-                .build());
+                        .build(),HttpStatus.OK.value()));
     }
 }

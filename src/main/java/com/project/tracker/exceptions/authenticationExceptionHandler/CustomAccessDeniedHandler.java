@@ -1,6 +1,7 @@
 package com.project.tracker.exceptions.authenticationExceptionHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.tracker.dto.responseDto.ApiResponseDto;
 import com.project.tracker.exceptions.globalExceptions.ErrorResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +34,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType("application/json");
 
-        objectMapper.writeValue(response.getWriter(), errorResponse);
+        objectMapper.writeValue(response.getWriter(), ApiResponseDto.error(errorResponse,null));
     }
 }

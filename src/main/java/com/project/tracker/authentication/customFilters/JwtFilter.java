@@ -2,6 +2,7 @@ package com.project.tracker.authentication.customFilters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.tracker.authentication.jwtService.JwtService;
+import com.project.tracker.dto.responseDto.ApiResponseDto;
 import com.project.tracker.exceptions.globalExceptions.ErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -86,6 +87,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 .timestamp(new Date())
                 .build();
 
-        new ObjectMapper().writeValue(response.getWriter(), errorResponse);
+        new ObjectMapper().writeValue(response.getWriter(), ApiResponseDto.error(errorResponse,null));
     }
 }

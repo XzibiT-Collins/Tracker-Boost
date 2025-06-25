@@ -12,6 +12,8 @@ import com.project.tracker.exceptions.customExceptions.InvalidLoginDetailsExcept
 import com.project.tracker.exceptions.customExceptions.UserRoleNotFoundException;
 import com.project.tracker.exceptions.customExceptions.UserNotFoundException;
 import com.project.tracker.exceptions.customExceptions.UserAlreadyExistException;
+import com.project.tracker.mappers.TaskMapper;
+import com.project.tracker.mappers.UserMapper;
 import com.project.tracker.models.AuditLog;
 import com.project.tracker.models.Task;
 import com.project.tracker.models.Users;
@@ -87,7 +89,8 @@ public class UsersServiceImpl implements UsersService {
                 role(role).
                 skills(requestDto.skills())
                 .build();
-        return objectMapper.convertValue(usersRepository.save(users), UsersResponseDto.class);
+
+        return UserMapper.mapToUserResponseDto(usersRepository.save(users));
     }
 
     @Override
@@ -95,7 +98,6 @@ public class UsersServiceImpl implements UsersService {
         Authentication authentication = authenticationProvider.
                 authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
 
-        //check if the user is successfully authenticated
         if(authentication.isAuthenticated()){
             System.out.println(authentication.getPrincipal() + "User logged in");
             return new UserLoginResponseDto(
@@ -110,7 +112,7 @@ public class UsersServiceImpl implements UsersService {
         Users users = usersRepository.findByEmail(authentication.getName());
         logger.info("Current Logged in user: " + users.getName() + " " + users.getEmail());
 
-        return objectMapper.convertValue(users, UsersResponseDto.class);
+        return UserMapper.mapToUserResponseDto(users);
     }
 
     @Override
@@ -118,7 +120,7 @@ public class UsersServiceImpl implements UsersService {
         Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(sortBy));
         Page<Task> userTasks = taskRepository.findAllByUserId(userId, pageable);
 
-        return userTasks.map(task -> objectMapper.convertValue(task, TaskResponseDto.class));
+        return userTasks.map((TaskMapper::mapToTaskResponseDto));
     }
 
     @Override
@@ -136,17 +138,13 @@ public class UsersServiceImpl implements UsersService {
             throw new UserNotFoundException("Users with ID: " + id + " not found");
         }
 
-        Users updatedUsers = Users.builder()
-                .id(id)
-                .name(requestDto.name())
-                .email(requestDto.email())
-                .skills(requestDto.skills())
-                .build();
+        Users updatedUsers = UserMapper.mapToUser(requestDto);
+        updatedUsers.setPassword(passwordEncoder.encode(updatedUsers.getPassword()));
 
         Users savedUsers = usersRepository.save(updatedUsers);
         logAudit("Update Users", String.valueOf(savedUsers.getId()), savedUsers.getName(), savedUsers);
 
-        return objectMapper.convertValue(savedUsers, UsersResponseDto.class);
+        return UserMapper.mapToUserResponseDto(savedUsers);
     }
 
     @Override
@@ -155,7 +153,7 @@ public class UsersServiceImpl implements UsersService {
                 .orElseThrow(() -> new UserNotFoundException("Users with ID: " + id + " not found"));
 
         logAudit("Get Users By ID", String.valueOf(users.getId()), users.getName(), users);
-        return objectMapper.convertValue(users, UsersResponseDto.class);
+        return UserMapper.mapToUserResponseDto(users);
     }
 
     @Override
@@ -167,7 +165,7 @@ public class UsersServiceImpl implements UsersService {
         Page<Users> developers = usersRepository.findAll(pageable);
 
         logAudit("Get all Developers" + paginateBy, "PAGE_"+pageNumber, "None", "Users");
-        return developers.map(developer -> objectMapper.convertValue(developer, UsersResponseDto.class));
+        return developers.map(UserMapper::mapToUserResponseDto);
     }
 
     @Override
@@ -178,7 +176,7 @@ public class UsersServiceImpl implements UsersService {
 
         logAudit("Get Top 5 Developers", "PAGE_"+0, "None", "Users");
         return top5Developers
-                .map(developer -> objectMapper.convertValue(developer, UsersResponseDto.class));
+                .map(UserMapper::mapToUserResponseDto);
     }
 
 

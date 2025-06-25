@@ -2,6 +2,7 @@ package com.project.tracker.controllers;
 
 import com.project.tracker.dto.requestDto.UserLoginRequestDto;
 import com.project.tracker.dto.requestDto.UsersRequestDto;
+import com.project.tracker.dto.responseDto.ApiResponseDto;
 import com.project.tracker.dto.responseDto.UserLoginResponseDto;
 import com.project.tracker.dto.responseDto.UsersResponseDto;
 import com.project.tracker.services.serviceInterfaces.UsersService;
@@ -25,12 +26,12 @@ public class AuthControllers {
 
     @CacheEvict(value = {"developers","top5Developers"}, allEntries = true)
     @PostMapping("/register")
-    public ResponseEntity<UsersResponseDto> register(@Valid @RequestBody UsersRequestDto user) {
-        return ResponseEntity.ok(usersService.registerUser(user));
+    public ResponseEntity<ApiResponseDto<UsersResponseDto>> register(@Valid @RequestBody UsersRequestDto user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponseDto.success(usersService.registerUser(user), HttpStatus.CREATED.value()));
     }
 
     @PostMapping("/login")
-    protected ResponseEntity<UserLoginResponseDto> login(@Valid @RequestBody UserLoginRequestDto user) {
-        return ResponseEntity.status(HttpStatus.OK).body(usersService.loginUser(user));
+    protected ResponseEntity<ApiResponseDto<UserLoginResponseDto>> login(@Valid @RequestBody UserLoginRequestDto user) {
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponseDto.success(usersService.loginUser(user), HttpStatus.OK.value()));
     }
 }

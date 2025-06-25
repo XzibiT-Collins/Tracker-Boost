@@ -8,6 +8,7 @@ import com.project.tracker.dto.responseDto.TaskResponseDto;
 import com.project.tracker.exceptions.customExceptions.UserNotFoundException;
 import com.project.tracker.exceptions.customExceptions.ProjectNotFoundException;
 import com.project.tracker.exceptions.customExceptions.TaskNotFoundException;
+import com.project.tracker.mappers.TaskMapper;
 import com.project.tracker.models.AuditLog;
 import com.project.tracker.models.Users;
 import com.project.tracker.models.Project;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
-    private Logger logger = Logger.getLogger(TaskServiceImpl.class.getName());
+    private final Logger logger = Logger.getLogger(TaskServiceImpl.class.getName());
     private final ObjectMapper objectMapper;
     private final TaskRepository taskRepository;
     private final UsersRepository usersRepository;
@@ -74,8 +75,8 @@ public class TaskServiceImpl implements TaskService {
 
         Task savedTask = taskRepository.save(task);
         logAudit("Create Task", String.valueOf(savedTask.getId()), savedTask.getTitle(), savedTask);
-        logger.info("Task Saved: " + savedTask.toString() + "\n");
-        return objectMapper.convertValue(savedTask, TaskResponseDto.class);
+
+        return TaskMapper.mapToTaskResponseDto(savedTask);
     }
 
     @Override
@@ -89,11 +90,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskResponseDto updateTask(int id, TaskRequestDto requestDto) {
-        logger.info("Task Request DTO: " + requestDto.toString() + "\n");
         Task existingTask = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException("Task with ID: " + id + " not found"));
 
-        logger.info("User ID: " + requestDto.userId() + "\n");
         Users users = usersRepository.findById(requestDto.userId())
                 .orElseThrow(() -> new UserNotFoundException("Users with ID: " + requestDto.userId() + " not found"));
 
@@ -113,7 +112,7 @@ public class TaskServiceImpl implements TaskService {
         Task savedTask = taskRepository.save(updatedTask);
         logAudit("Update Task", String.valueOf(savedTask.getId()), savedTask.getTitle(), savedTask);
 
-        return objectMapper.convertValue(savedTask, TaskResponseDto.class);
+        return TaskMapper.mapToTaskResponseDto(savedTask);
     }
 
     @Override
@@ -123,7 +122,7 @@ public class TaskServiceImpl implements TaskService {
 
         logAudit("Get Task By ID", String.valueOf(task.getId()), task.getTitle(), task);
 
-        return objectMapper.convertValue(task, TaskResponseDto.class);
+        return TaskMapper.mapToTaskResponseDto(task);
     }
 
     @Override
@@ -136,7 +135,7 @@ public class TaskServiceImpl implements TaskService {
 
         logAudit("Get All Tasks", "PAGE_" + pageNumber, "None", "Task");
 
-        return tasks.map(task -> objectMapper.convertValue(task, TaskResponseDto.class));
+        return tasks.map(TaskMapper::mapToTaskResponseDto);
     }
 
     @Override
@@ -149,7 +148,7 @@ public class TaskServiceImpl implements TaskService {
 
         logAudit("Get All Overdue Tasks", "PAGE_" + pageNumber, "None", "Task");
 
-        return tasks.map(task -> objectMapper.convertValue(task, TaskResponseDto.class));
+        return tasks.map(TaskMapper::mapToTaskResponseDto);
     }
 
     @Override

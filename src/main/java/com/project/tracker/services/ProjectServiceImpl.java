@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.tracker.dto.requestDto.ProjectRequestDto;
 import com.project.tracker.dto.responseDto.ProjectResponseDto;
 import com.project.tracker.exceptions.customExceptions.ProjectNotFoundException;
+import com.project.tracker.mappers.ProjectMapper;
 import com.project.tracker.models.AuditLog;
 import com.project.tracker.models.Project;
 import com.project.tracker.repositories.ProjectRepository;
@@ -37,17 +38,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectResponseDto addProject(ProjectRequestDto requestDto) {
-        Project project = Project.builder()
-                .projectName(requestDto.projectName())
-                .description(requestDto.description())
-                .deadline(requestDto.deadline())
-                .status(requestDto.status())
-                .build();
+        Project project = ProjectMapper.mapToProject(requestDto);
 
         Project savedProject = projectRepository.save(project);
         logAudit("Create Project", String.valueOf(savedProject.getId()), savedProject.getProjectName(), savedProject);
 
-        return objectMapper.convertValue(savedProject, ProjectResponseDto.class);
+        return ProjectMapper.mapToProjectResponseDto(savedProject);
     }
 
     @Override
@@ -67,18 +63,12 @@ public class ProjectServiceImpl implements ProjectService {
             throw new ProjectNotFoundException("Project with ID: " + id + " not found");
         }
 
-        Project updatedProject = Project.builder()
-                .id(id)
-                .projectName(requestDto.projectName())
-                .description(requestDto.description())
-                .deadline(requestDto.deadline())
-                .status(requestDto.status())
-                .build();
+        Project updatedProject = ProjectMapper.mapToProject(requestDto);
 
         Project savedProject = projectRepository.save(updatedProject);
         logAudit("Update Project", String.valueOf(savedProject.getId()), savedProject.getProjectName(), savedProject);
 
-        return objectMapper.convertValue(savedProject, ProjectResponseDto.class);
+        return ProjectMapper.mapToProjectResponseDto(savedProject);
     }
 
     @Override
@@ -89,7 +79,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         logAudit("Get Project By ID", String.valueOf(project.getId()), project.getProjectName(), project);
 
-        return objectMapper.convertValue(project, ProjectResponseDto.class);
+        return ProjectMapper.mapToProjectResponseDto(project);
     }
 
     @Override
@@ -104,7 +94,7 @@ public class ProjectServiceImpl implements ProjectService {
         // Optional: log general access (not per item) if needed
         logAudit("Get All Projects", "PAGE_" + pageNumber, "None", "Project");
 
-        return projects.map(project -> objectMapper.convertValue(project, ProjectResponseDto.class));
+        return projects.map(ProjectMapper::mapToProjectResponseDto);
     }
 
     @Override
@@ -117,7 +107,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         logAudit("Get Projects Without Tasks","PAGE_"+pageNumber,"None","Project");
         return projects
-                .map(project -> objectMapper.convertValue(project, ProjectResponseDto.class));
+                .map(ProjectMapper::mapToProjectResponseDto);
     }
 
     private void logAudit(String actionType, String entityId, String actorName, Object entity) {
