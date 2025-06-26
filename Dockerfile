@@ -25,5 +25,7 @@ COPY --from=builder /app/target/*.jar app.jar
 #Expose port for application
 EXPOSE 8080
 
+
 #Run springboot application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+#ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-XX:+UseG1GC","-Xmx512m","-Xms512m","-XX:+PrintGCDetails","-XX:+HeapDumpOnOutOfMemoryError","-jar","app.jar"]

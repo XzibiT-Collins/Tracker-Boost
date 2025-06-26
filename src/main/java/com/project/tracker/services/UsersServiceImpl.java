@@ -110,7 +110,6 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public UsersResponseDto getCurrentLoggedInUser(Authentication authentication) {
         Users users = usersRepository.findByEmail(authentication.getName());
-        logger.info("Current Logged in user: " + users.getName() + " " + users.getEmail());
 
         return UserMapper.mapToUserResponseDto(users);
     }

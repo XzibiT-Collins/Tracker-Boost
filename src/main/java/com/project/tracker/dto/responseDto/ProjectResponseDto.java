@@ -13,6 +13,5 @@ public record ProjectResponseDto(
     String projectName,
     String description,
     Date deadline,
-    StatusEnum status,
-    List<Task>tasks
+    StatusEnum status
 ) {}

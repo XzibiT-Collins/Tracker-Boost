@@ -35,7 +35,7 @@ public class Users {
 
     private Set<String> skills;
 
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
     @JsonManagedReference(value = "users-task")
     private List<Task> tasks;
 }

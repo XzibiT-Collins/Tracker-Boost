@@ -9,7 +9,5 @@ public record TaskResponseDto(
         String title,
         String description,
         StatusEnum status,
-        String dueDate,
-        String users,
-        String project
+        String dueDate
 ) {}

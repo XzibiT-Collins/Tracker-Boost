@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
-    private final Logger logger = Logger.getLogger(TaskServiceImpl.class.getName());
     private final ObjectMapper objectMapper;
     private final TaskRepository taskRepository;
     private final UsersRepository usersRepository;

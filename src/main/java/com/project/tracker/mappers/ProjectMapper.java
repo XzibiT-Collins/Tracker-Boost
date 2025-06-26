@@ -23,7 +23,6 @@ public class ProjectMapper {
                 .description(project.getDescription())
                 .deadline(project.getDeadline())
                 .status(project.getStatus())
-                .tasks(project.getTasks())
                 .build();
     }
 }
