@@ -36,7 +36,7 @@ public class TaskController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    @CacheEvict(value = {"tasks","overdueTasks","taskCount"}, allEntries = true)
+    @CacheEvict(value = {"tasks","overdueTasks","taskCount","userTasks"}, allEntries = true)
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponseDto<String>> deleteTask(@PathVariable int id){
         taskService.deleteTask(id);

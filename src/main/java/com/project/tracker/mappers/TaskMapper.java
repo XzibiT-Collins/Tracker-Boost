@@ -23,8 +23,6 @@ public class TaskMapper {
                 .description(task.getDescription())
                 .status(task.getStatus())
                 .dueDate(task.getDueDate().toString())
-                .users(task.getUsers().getName())
-                .project(task.getProject().getProjectName())
                 .build();
     }
 }

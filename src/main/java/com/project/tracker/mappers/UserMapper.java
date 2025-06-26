@@ -24,7 +24,6 @@ public class UserMapper {
                 .name(user.getName())
                 .email(user.getEmail())
                 .skills(user.getSkills())
-                .tasks(user.getTasks())
                 .role(user.getRole().getName())
                 .build();
     }

@@ -91,7 +91,6 @@ public class ProjectServiceImpl implements ProjectService {
 
         Page<Project> projects = projectRepository.findAll(pageable);
 
-        // Optional: log general access (not per item) if needed
         logAudit("Get All Projects", "PAGE_" + pageNumber, "None", "Project");
 
         return projects.map(ProjectMapper::mapToProjectResponseDto);

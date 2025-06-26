@@ -13,6 +13,5 @@ public record UsersResponseDto(
     String name,
     String email,
     Set<String> skills,
-    List<Task>tasks,
     String role
 ) {}
