@@ -12,6 +12,7 @@
 - [Memory Hotspot Analysis](#-memory-hotspot)
 - [Key Optimization Strategies](#-key-optimization-strategies)
 - [Performance Summary](#-performance-summary)
+- [Grafana Dashboard](#)
 
 ---
 
@@ -115,6 +116,11 @@ Load testing with JMeter to analyze system behavior **before and after** applyin
 - Before: Frequent collection due to high object churn.
 - After: 62% less memory → fewer GC cycles → better performance.
 ```
+
+---
+
+## **Grafana Dashboard**
+![Grafana Dashboard](images/grafana.png)
 
 ---
 
