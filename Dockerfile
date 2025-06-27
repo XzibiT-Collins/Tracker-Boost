@@ -27,5 +27,4 @@ EXPOSE 8080
 
 
 #Run springboot application
-#ENTRYPOINT ["java", "-jar", "app.jar"]
-ENTRYPOINT ["java","-XX:+UseG1GC","-Xmx512m","-Xms512m","-XX:+PrintGCDetails","-XX:+HeapDumpOnOutOfMemoryError","-jar","app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
